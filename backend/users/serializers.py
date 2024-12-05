@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_email_task
 from .models import User
+from contents.models import SiteSetting
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, error_messages={
@@ -65,6 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         # send confirmation email
         email_context = {
             'user': user,
+            'site' : SiteSetting.objects.filter(is_main_setting=True).values('site_name', 'domain').first()
         }
         
         send_email_task.delay(

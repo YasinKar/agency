@@ -7,6 +7,7 @@ from django.utils.crypto import get_random_string
 from .models import User
 from .serializers import RegisterSerializer, EmailSerializer, ResetPasswordSerializer
 from .tasks import send_email_task
+from contents.models import SiteSetting
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -39,6 +40,7 @@ class ForgotPasswordAPIView(APIView):
                 # send email
                 email_context ={
                     'user' : user,
+                    'site' : SiteSetting.objects.filter(is_main_setting=True).values('site_name', 'domain').first()
                 }
                 
                 send_email_task.delay(

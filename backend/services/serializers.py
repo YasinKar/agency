@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Service, ServiceImage, ServiceComment
 
 class ServiceCommentSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
     replies = serializers.PrimaryKeyRelatedField(queryset=ServiceComment.objects.all(), many=True)
     
     class Meta:
