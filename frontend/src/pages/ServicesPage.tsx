@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Loading from '../components/Loading'
-import Comments from '../components/Comments'
+// import Comments from '../components/Comments'
 
 interface Service {
   label: string
@@ -134,7 +134,7 @@ export default function ServicesPage() {
           Image {currentImageIndex + 1} of {service.gallery.length}
         </p>
       </div>
-      <Comments />
+      {/* <Comments /> */}
     </div>
   )
 }

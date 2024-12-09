@@ -153,6 +153,7 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                            <a href="#home" className="text-text-primary hover:text-secondary transition-colors">Home</a>
                            <a href="#whatweoffer" className="text-text-primary hover:text-secondary transition-colors">What We Offer</a>
                            <a href="#projects" className="text-text-primary hover:text-secondary transition-colors">Projects</a>
+                           <a href="#about" className="text-text-primary hover:text-secondary transition-colors">About us</a>
                            <a href="#faq" className="text-text-primary hover:text-secondary transition-colors">FAQ</a>
                            <div className="relative group">
                               <button
@@ -285,6 +286,13 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                                  className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
                               >
                                  Projects
+                              </a>
+                              <a
+                                 href="#about"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 About us
                               </a>
                               <a
                                  href="#faq"
