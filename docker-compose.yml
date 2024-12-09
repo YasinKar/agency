@@ -10,13 +10,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-  
+
   db:
     image: postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+    env_file:
+      - ./backend/.env
     ports:
       - "5432:5432"
 
@@ -70,3 +68,15 @@ services:
       - "5555:5555"
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app/
+    environment:
+      - BACKEND_URL=http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

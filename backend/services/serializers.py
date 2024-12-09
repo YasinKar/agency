@@ -3,11 +3,10 @@ from .models import Service, ServiceImage, ServiceComment
 
 class ServiceCommentSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username')
-    replies = serializers.PrimaryKeyRelatedField(queryset=ServiceComment.objects.all(), many=True)
     
     class Meta:
         model = ServiceComment
-        fields = ['id', 'title', 'message', 'replay', 'service', 'user', 'recommend', 'date', 'likes', 'dislikes', 'replies']
+        fields = ['id', 'title', 'message', 'replay', 'service', 'user', 'recommend', 'date', 'likes', 'dislikes']
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
