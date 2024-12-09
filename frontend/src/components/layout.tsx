@@ -1,18 +1,36 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import { revealText } from "@/utils/animations";
 import { BsTwitterX, BsGithub, BsLinkedin } from "react-icons/bs";
+import { ReactNode } from 'react';
 
-const navItems = [
-   { label: "Home", href: "#home" },
-   { label: "Services", href: "#services" },
-   { label: "Projects", href: "#projects" },
-   { label: "FAQ", href: "#faq" },
-];
+interface Service {
+  label: string;
+  title: string;
+  description: string;
+  gallery: string[];
+}
+
+const fetchServices = async (): Promise<Service[]> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return [
+    {
+      label: 'web-development',
+      title: 'Web Development',
+      description: 'We create responsive and dynamic websites tailored to your needs. Our team of expert developers uses cutting-edge technologies to build fast, secure, and scalable web applications that drive your business forward.',
+      gallery: ['https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image']
+    },
+    {
+      label: 'app-development',
+      title: 'App Development',
+      description: 'From concept to launch, we build mobile apps for iOS and Android that engage users and deliver real value. Our app development process ensures your product stands out in the crowded app marketplace.',
+      gallery: ['https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image']
+    }
+  ];
+};
 
 function Footer() {
-
-
    const Year = new Date().getFullYear()
 
    return (
@@ -54,16 +72,26 @@ function Footer() {
    );
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: ReactNode;
+  isServicePage: boolean;
+}
+
+export default function Layout({ children, isServicePage }: LayoutProps) {
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+   const [services, setServices] = useState<Service[]>([]);
 
    useEffect(() => {
       const texts = document.querySelectorAll(".reveal-text");
       texts.forEach((text) => revealText(text as unknown as string));
+
+      fetchServices().then(setServices);
    }, []);
 
    const handleMenuClick = () => {
       setIsMobileMenuOpen(false);
+      setIsServicesDropdownOpen(false);
    };
 
    return (
@@ -76,24 +104,97 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                      animate={{ opacity: 1 }}
                      className="text-secondary text-2xl font-bold"
                   >
-                     SoonDevelope
+                     <Link to="/">SoonDevelope</Link>
                   </motion.div>
                   <div className="hidden md:flex items-center space-x-8">
-                     {navItems.map((item) => (
-                        <a
-                           key={item.label}
-                           href={item.href}
-                           className="text-text-primary hover:text-secondary transition-colors"
-                        >
-                           {item.label}
-                        </a>
-                     ))}
-
-                     <div className="flex items-center">
+                     {isServicePage ? (
+                        <>                        
+                           <Link to="/" className="text-text-primary hover:text-secondary transition-colors">
+                              Home
+                           </Link>
+                           <div className="relative group">
+                              <button
+                                 onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                                 className="text-text-primary hover:text-secondary transition-colors"
+                              >
+                                 Services
+                                 <svg className="w-4 h-4 ml-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                 </svg>
+                              </button>
+                              <AnimatePresence>
+                                 {isServicesDropdownOpen && (
+                                    <motion.div
+                                       initial={{ opacity: 0, y: -10 }}
+                                       animate={{ opacity: 1, y: 0 }}
+                                       exit={{ opacity: 0, y: -10 }}
+                                       className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-primary/80 ring-1 ring-black ring-opacity-5"
+                                    >
+                                       <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                          {services.map((service) => (
+                                             <Link
+                                                key={service.label}
+                                                to={`/services/${service.label}`}
+                                                className="block px-4 py-2 text-sm text-text-primary hover:bg-secondary/10 hover:text-secondary"
+                                                role="menuitem"
+                                                onClick={() => setIsServicesDropdownOpen(false)}
+                                             >
+                                                {service.title}
+                                             </Link>
+                                          ))}
+                                       </div>
+                                    </motion.div>
+                                 )}
+                              </AnimatePresence>
+                           </div>
+                        </>
+                     ) : (
+                        <>
+                           <a href="#home" className="text-text-primary hover:text-secondary transition-colors">Home</a>
+                           <a href="#whatweoffer" className="text-text-primary hover:text-secondary transition-colors">What We Offer</a>
+                           <a href="#projects" className="text-text-primary hover:text-secondary transition-colors">Projects</a>
+                           <a href="#faq" className="text-text-primary hover:text-secondary transition-colors">FAQ</a>
+                           <div className="relative group">
+                              <button
+                                 onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                                 className="text-text-primary hover:text-secondary transition-colors"
+                              >
+                                 Services
+                                 <svg className="w-4 h-4 ml-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                 </svg>
+                              </button>
+                              <AnimatePresence>
+                                 {isServicesDropdownOpen && (
+                                    <motion.div
+                                       initial={{ opacity: 0, y: -10 }}
+                                       animate={{ opacity: 1, y: 0 }}
+                                       exit={{ opacity: 0, y: -10 }}
+                                       className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-primary/80 ring-1 ring-black ring-opacity-5"
+                                    >
+                                       <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                          {services.map((service) => (
+                                             <Link
+                                                key={service.label}
+                                                to={`/services/${service.label}`}
+                                                className="block px-4 py-2 text-sm text-text-primary hover:bg-secondary/10 hover:text-secondary"
+                                                role="menuitem"
+                                                onClick={() => setIsServicesDropdownOpen(false)}
+                                             >
+                                                {service.title}
+                                             </Link>
+                                          ))}
+                                       </div>
+                                    </motion.div>
+                                 )}
+                              </AnimatePresence>
+                           </div>
+                        </>
+                     )}
+                     <div>
                         <a
                            href="#contact"
                            className="text-secondary bg-special py-2 px-4 rounded-lg hover:bg-special/80 transition-all"
-                           style={{ display: "inline-block" }}
                         >
                            Contact
                         </a>
@@ -120,25 +221,122 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         exit={{ opacity: 0, y: -20 }}
                         className="md:hidden bg-primary p-4 mt-4 rounded-md"
                      >
-                        {navItems.map((item) => (
-                           <a
-                              key={item.label}
-                              href={item.href}
-                              onClick={handleMenuClick}
-                              className="block text-text-primary py-2 hover:text-secondary transition-colors"
-                           >
-                              {item.label}
-                           </a>
-                        ))}
+                        {isServicePage ? (
+                           <>
+                              <Link
+                                 to="/"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 Home
+                              </Link>
+                              <div>
+                                 <button
+                                    onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                                    className="block w-full text-text-primary py-2 hover:text-secondary transition-colors text-left"
+                                 >
+                                    Services
+                                    <svg className="w-4 h-4 ml-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                 </button>
+                                 <AnimatePresence>
+                                    {isServicesDropdownOpen && (
+                                       <motion.div
+                                          initial={{ opacity: 0, y: -10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          exit={{ opacity: 0, y: -10 }}
+                                          className="pl-4"
+                                       >
+                                          {services.map((service) => (
+                                             <Link
+                                                key={service.label}
+                                                to={`/services/${service.label}`}
+                                                className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                                                onClick={handleMenuClick}
+                                             >
+                                                {service.title}
+                                             </Link>
+                                          ))}
+                                       </motion.div>
+                                    )}
+                                 </AnimatePresence>
+                              </div>
+                           </>
+                        ) : (
+                           <>
+                              <a
+                                 href="#home"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 Home
+                              </a>
+                              <a
+                                 href="#whatweoffer"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 What We Offer
+                              </a>
+                              <a
+                                 href="#projects"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 Projects
+                              </a>
+                              <a
+                                 href="#faq"
+                                 onClick={handleMenuClick}
+                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                              >
+                                 FAQ
+                              </a>
+                              <div>
+                                 <button
+                                    onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                                    className="block w-full text-text-primary py-2 hover:text-secondary transition-colors text-left"
+                                 >
+                                    Services
+                                    <svg className="w-4 h-4 ml-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                 </button>
+                                 <AnimatePresence>
+                                    {isServicesDropdownOpen && (
+                                       <motion.div
+                                          initial={{ opacity: 0, y: -10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          exit={{ opacity: 0, y: -10 }}
+                                          className="pl-4"
+                                       >
+                                          {services.map((service) => (
+                                             <Link
+                                                key={service.label}
+                                                to={`/services/${service.label}`}
+                                                className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
+                                                onClick={handleMenuClick}
+                                             >
+                                                {service.title}
+                                             </Link>
+                                          ))}
+                                       </motion.div>
+                                    )}
+                                 </AnimatePresence>
+                              </div>
+                           </>
+                        )}
                      </motion.div>
                   )}
                </AnimatePresence>
             </div>
          </nav>
          <AnimatePresence mode="wait">
-            <main className="">{children}</main>
+            <main>{children}</main>
          </AnimatePresence>
          <Footer />
       </div>
    );
 }
+
