@@ -28,14 +28,6 @@ class ServiceImage(models.Model):
 class ServiceComment(models.Model):
     title = models.CharField(max_length=200, verbose_name='Title')
     message = models.TextField(verbose_name='Message')
-    replay = models.ForeignKey(
-    'self',
-    on_delete=models.CASCADE,
-    null=True,
-    blank=True,
-    verbose_name='Reply',
-    related_name='replies'
-    )
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Service', related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User')
     recommend = models.BooleanField(default=True, verbose_name='Recommend')

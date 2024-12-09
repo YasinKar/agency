@@ -13,7 +13,7 @@ class ServiceListView(ListAPIView):
         'service_images',
         Prefetch(
             'comments',
-            queryset=ServiceComment.objects.prefetch_related('replies').select_related('user')
+            queryset=ServiceComment.objects.select_related('user')
         )
     )
     serializer_class = ServiceSerializer
@@ -24,7 +24,7 @@ class ServiceDetailView(RetrieveAPIView):
         'service_images',
         Prefetch(
             'comments',
-            queryset=ServiceComment.objects.prefetch_related('replies').select_related('user')
+            queryset=ServiceComment.objects.select_related('user')
         )
     )
     serializer_class = ServiceSerializer
