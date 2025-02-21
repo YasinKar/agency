@@ -1,22 +1,60 @@
 from django.db import models
-from django.core.exceptions import ValidationError
-import re
+from django.core.validators import RegexValidator
 
 class SiteSetting(models.Model):
-    domain = models.CharField(max_length=300, verbose_name='Site Domain')
-    site_name = models.CharField(max_length=100, verbose_name='Site Name')
-    site_logo = models.ImageField(upload_to='site_logo', verbose_name='Site Logo')
-    site_icon = models.ImageField(upload_to='site_icon', null=True, blank=True, verbose_name='Site Icon')
-    site_about = models.TextField(verbose_name='About the Site')
-    adress = models.TextField(null=True, blank=True, verbose_name='Address')
-    phone = models.CharField(max_length=15, blank=True, null=True, verbose_name='Mobile Number')
-    twitter = models.URLField(max_length=400, verbose_name='Twitter', null=True, blank=True)
-    github = models.URLField(max_length=400, verbose_name='Github', null=True, blank=True)
-    linkedin = models.URLField(max_length=400, verbose_name='Linkedin', null=True, blank=True)
-    email = models.CharField(max_length=200, verbose_name='Email', null=True, blank=True)
-    copyright = models.CharField(max_length=200, verbose_name='Copyright Text', null=True, default='&#169; All Rights Reserved')
-    maintenance_mode = models.BooleanField(default=False, verbose_name='Site Active / Inactive')
-    is_main_setting = models.BooleanField(default=False, verbose_name='Set as Main Setting')
+    domain = models.CharField(max_length=300, verbose_name='Domain')
+    site_name = models.CharField(max_length=100, verbose_name='Site name')
+    site_logo = models.ImageField(upload_to='site_logo', verbose_name='Site logo')
+    site_icon = models.ImageField(upload_to='site_icon',null=True, blank=True, verbose_name='Site icon')
+    site_description = models.TextField(verbose_name='Description')
+    site_main_title = models.TextField(verbose_name='Site Main Title')
+    rules = models.TextField(verbose_name='Rules')
+    about_us = models.TextField(verbose_name='About Us')
+    telegram = models.URLField(
+        max_length=400,
+        verbose_name='Telegram',
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex=r'^https://t\.me/.*$',
+            message='Please enter a valid Telegram URL starting with https://t.me/'
+        )]
+    )
+    twitter = models.URLField(
+        max_length=400,
+        verbose_name='Twitter',
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex=r'^https://twitter\.com/.*$',
+            message='Please enter a valid Twitter URL starting with https://twitter.com/'
+        )]
+    )
+    linkedin = models.URLField(
+        max_length=400,
+        verbose_name='Linkedin',
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex=r'^https://www\.linkedin\.com/.*$',
+            message='Please enter a valid Linkedin URL starting with https://www.linkedin.com/'
+        )]
+    )
+    instagram = models.URLField(
+        max_length=400,
+        verbose_name='Instagram',
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex=r'^https://www\.instagram\.com/.*$',
+            message='Please enter a valid Instagram URL starting with https://www.instagram.com/'
+        )]
+    )
+    email = models.EmailField(max_length=200, verbose_name='Email', null=True, blank=True)
+    phone = models.IntegerField(verbose_name='Phone', null=True, blank=True)
+    copyright = models.CharField(max_length=200, verbose_name='Copyright', null=True, default='All right reserved ©')
+    maintenance_mode = models.BooleanField(default=False, verbose_name='Maintenance mode')
+    is_main_setting = models.BooleanField(default=False, verbose_name='Main setting')
      
     class Meta:
         verbose_name = 'Site Settings'
@@ -24,35 +62,29 @@ class SiteSetting(models.Model):
     
     def __str__(self):
         return f'{self.site_name} : {self.domain}'
-
-    def clean(self):
-        phone_regex = r"^(0|98)?([ ]|-|[()]){0,2}9[0-4|9]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}$"
-        if self.phone and not re.match(phone_regex, self.phone):
-            raise ValidationError({'phone': 'The entered mobile number is invalid.'})
+   
+class FAQ(models.Model):
+    question = models.TextField(verbose_name='Question')
+    answer = models.TextField(verbose_name='Answer')
+    is_active = models.BooleanField(verbose_name='Active', default=True, db_index=True)
     
-class ElectronicSymbol(models.Model):
-    url = models.URLField(max_length=200, verbose_name='Link')
-    image = models.ImageField(upload_to='e_symbols', verbose_name='Image')
-    is_active = models.BooleanField(verbose_name='Active / Inactive', default=True, db_index=True)
-     
     class Meta:
-        verbose_name = 'Electronic Symbol'
-        verbose_name_plural = 'Electronic Symbols'
+        verbose_name = 'FAQ'
+        verbose_name_plural = 'FAQ'
+    
+    def __str__(self) :
+        return self.question
    
 class ContactUs(models.Model):
-    phone = models.CharField(max_length=15, verbose_name='Mobile Number')
-    title = models.CharField(max_length=300, verbose_name='Title')
+    full_name = models.CharField(max_length=200, verbose_name='Full Name')
+    email = models.EmailField(max_length=200, verbose_name='Email')
+    title = models.CharField(max_length=100, verbose_name='Title')
     message = models.TextField(verbose_name='Message')
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Date')
+    date = models.DateField(auto_now_add=True, verbose_name='Date')
     
     class Meta:
         verbose_name = 'Contact'
         verbose_name_plural = 'Contacts'
     
     def __str__(self):
-        return f'Message {self.title} from {self.phone}'
-    
-    def clean(self):
-        phone_regex = r"^(0|98)?([ ]|-|[()]){0,2}9[0-4|9]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}$"
-        if self.phone and not re.match(phone_regex, self.phone):
-            raise ValidationError({'phone': 'The entered mobile number is invalid.'})
+        return f'Contact from {self.email}, Title : {self.title}'

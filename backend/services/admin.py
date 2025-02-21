@@ -1,11 +1,31 @@
 from django.contrib import admin
-from . import models
+from django.utils.html import format_html
+from .models import (
+    ServiceFeature,
+    ServiceImage,
+    Service
+)
 
+class ServiceFeatureBlockInline(admin.TabularInline):
+    model = ServiceFeature
+    extra = 3
+    
+class ServiceImageBlockInline(admin.TabularInline):
+    model = ServiceImage
+    extra = 3
+    
+@admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ['title', 'is_active']
-    list_editable = ['is_active']
-    search_fields = ['title', 'is_active']
-
-admin.site.register(models.Service, ServiceAdmin)
-admin.site.register(models.ServiceComment)
-admin.site.register(models.ServiceImage)
+    list_display = ('thumbnail_tag', 'title', 'created_at', 'is_active')
+    list_display_links = ('thumbnail_tag', 'title')
+    list_filter = ('title', 'created_at', 'is_active')
+    search_fields = ('title', 'created_at', 'is_active')
+    list_editable = ('is_active', )
+    exclude = ('slug', )
+    
+    def thumbnail_tag(self, obj):
+        return format_html('<img src="{}" width="300" height="150" />'.format(obj.thumbnail.url))
+    
+    thumbnail_tag.short_description = 'Image'
+    
+    inlines = [ServiceFeatureBlockInline, ServiceImageBlockInline]
