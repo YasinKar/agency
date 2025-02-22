@@ -1,6 +1,8 @@
 from django.db import models
+from django_mongodb_backend.fields import ObjectIdAutoField
 
 class Service(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     title = models.CharField(max_length=200, verbose_name='Title')
     description = models.TextField(verbose_name='Description')
     thumbnail = models.ImageField(upload_to='services_thumbnail', verbose_name='Service Thumbnail')
@@ -16,6 +18,7 @@ class Service(models.Model):
         return self.title
         
 class ServiceImage(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Service', related_name='service_images')
     image = models.ImageField(upload_to='services', verbose_name='Service Image')
     
@@ -27,6 +30,7 @@ class ServiceImage(models.Model):
         return f'Image for service : {self.service.title}'
 
 class ServiceFeature(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Service', related_name='service_features')
     key = models.CharField(max_length=100, verbose_name='Key')
     value = models.CharField(max_length=100, verbose_name='Value')

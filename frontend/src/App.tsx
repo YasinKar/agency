@@ -6,6 +6,7 @@ import Projects from './components/projects';
 import FAQ from './components/faq';
 import Contact from './components/contact';
 import ServicesPage from './pages/ServicesPage';
+import About from './components/about';
 
 function AppContent() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function AppContent() {
             <Hero />
             <Services />
             <Projects />
+            <About />
             <FAQ />
             <Contact />
           </>

@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django_mongodb_backend.fields import ObjectIdAutoField
 
 class SiteSetting(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     domain = models.CharField(max_length=300, verbose_name='Domain')
     site_name = models.CharField(max_length=100, verbose_name='Site name')
     site_logo = models.ImageField(upload_to='site_logo', verbose_name='Site logo')
@@ -64,6 +66,7 @@ class SiteSetting(models.Model):
         return f'{self.site_name} : {self.domain}'
    
 class FAQ(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     question = models.TextField(verbose_name='Question')
     answer = models.TextField(verbose_name='Answer')
     is_active = models.BooleanField(verbose_name='Active', default=True, db_index=True)
@@ -76,6 +79,7 @@ class FAQ(models.Model):
         return self.question
    
 class ContactUs(models.Model):
+    id = ObjectIdAutoField(primary_key=True)
     full_name = models.CharField(max_length=200, verbose_name='Full Name')
     email = models.EmailField(max_length=200, verbose_name='Email')
     title = models.CharField(max_length=100, verbose_name='Title')

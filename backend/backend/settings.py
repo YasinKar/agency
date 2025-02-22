@@ -1,3 +1,4 @@
+import django_mongodb_backend
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -12,10 +13,11 @@ DEBUG = os.environ.get('DEBUG', '0') == '1'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'backend.apps.MongoAdminConfig',
+    'backend.apps.MongoAuthConfig',
+    'backend.apps.MongoContentTypesConfig',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -25,7 +27,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'debug_toolbar',
     'drf_spectacular',
-    'axes',
     
     # internal apps
     'services',
@@ -44,7 +45,6 @@ MIDDLEWARE = [
     'contents.middleware.MaintenanceModeMiddleware',
     # external middlewares
     'corsheaders.middleware.CorsMiddleware',
-    'axes.middleware.AxesMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -70,22 +70,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
-        'PORT': os.environ.get('POSTGRES_PORT'),
-    },
+    "default": django_mongodb_backend.parse_uri(
+        f"mongodb://{os.getenv('MONGO_USERNAME')}:{os.getenv('MONGO_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/backend"
+    ),
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -103,7 +92,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -118,18 +106,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Axes
-AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
-
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 2
-
-AXES_LOG_ATTEMPT_LIMIT = 100
+DEFAULT_AUTO_FIELD = 'django_mongodb_backend.fields.ObjectIdAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -140,3 +117,9 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
+
+MIGRATION_MODULES = {
+    'admin': 'mongo_migrations.admin',
+    'auth': 'mongo_migrations.auth',
+    'contenttypes': 'mongo_migrations.contenttypes',
+}
