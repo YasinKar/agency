@@ -1,29 +1,14 @@
+'use client'
+
+import { Service } from '@/types/service.types'
 import { motion } from 'framer-motion'
+import React from 'react'
 
-const services = [
-  {
-    title: 'Web Development',
-    description: 'Creating powerful, scalable web applications with cutting-edge technologies.',
-    icon: '🌐',
-  },
-  {
-    title: 'UI/UX Design',
-    description: 'Crafting beautiful, intuitive interfaces that users love to interact with.',
-    icon: '🎨',
-  },
-  {
-    title: 'Mobile Development',
-    description: 'Building native and cross-platform mobile applications.',
-    icon: '📱',
-  },
-  {
-    title: 'Digital Marketing',
-    description: 'Growing your digital presence with data-driven marketing strategies.',
-    icon: '📈',
-  },
-]
+type Whatweoffer = {
+  services: Service[]
+}
 
-export default function Whatweoffer() {
+const Whatweoffer: React.FC<Whatweoffer> = ({ services }) => {
   return (
     <section id="whatweoffer" className="py-20">
       <div className="container mx-auto px-4">
@@ -31,7 +16,7 @@ export default function Whatweoffer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
             <motion.div
-              key={service.title}
+              key={index}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -48,3 +33,4 @@ export default function Whatweoffer() {
   )
 }
 
+export default Whatweoffer

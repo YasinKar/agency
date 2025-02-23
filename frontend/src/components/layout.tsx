@@ -1,71 +1,65 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
-import { revealText } from "@/utils/animations";
-import { BsTwitterX, BsGithub, BsLinkedin } from "react-icons/bs";
-import { ReactNode } from 'react';
+'use client'
 
-interface Service {
-  label: string;
-  title: string;
-  description: string;
-  gallery: string[];
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { revealText } from "@/utils/animations";
+import { BsTwitterX, BsGithub, BsLinkedin, BsInstagram, BsTelegram } from "react-icons/bs";
+import { ReactNode } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Settings } from "@/types/content.types";
+import { Service } from "@/types/service.types";
+
+type FooterProps = {
+   settings: Settings
 }
 
-const fetchServices = async (): Promise<Service[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return [
-    {
-      label: 'web-development',
-      title: 'Web Development',
-      description: 'We create responsive and dynamic websites tailored to your needs. Our team of expert developers uses cutting-edge technologies to build fast, secure, and scalable web applications that drive your business forward.',
-      gallery: ['https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image']
-    },
-    {
-      label: 'app-development',
-      title: 'App Development',
-      description: 'From concept to launch, we build mobile apps for iOS and Android that engage users and deliver real value. Our app development process ensures your product stands out in the crowded app marketplace.',
-      gallery: ['https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image', 'https://random-image-pepebigotes.vercel.app/api/random-image']
-    }
-  ];
-};
-
-function Footer() {
-   const Year = new Date().getFullYear()
-
+const Footer: React.FC<FooterProps> = ({ settings }) => {
    return (
       <footer className="bg-primary/80 text-text-primary py-8">
          <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
                <div className="mb-4 md:mb-0">
                   <h3 className="text-2xl font-bold text-secondary">
-                     SoonDevelope
+                     {settings.site_name}
                   </h3>
-                  <p className="mt-2">The Sooner you get into web, The sooner you succeed.</p>
+                  <p className="mt-2">{settings.site_main_title}</p>
                </div>
                <div className="flex space-x-4 text-2xl">
                   <a
-                     href="/"
+                     href={settings.twitter || '/'}
                      className="hover:text-secondary transition-colors"
                   >
                      <BsTwitterX />
                   </a>
                   <a
-                     href="/"
+                     href={settings.github || '/'}
                      className="hover:text-secondary transition-colors"
                   >
                      <BsGithub />
                   </a>
                   <a
-                     href="/"
+                     href={settings.linkedin || '/'}
                      className="hover:text-secondary transition-colors"
                   >
                      <BsLinkedin />
                   </a>
+                  <a
+                     href={settings.instagram || '/'}
+                     className="hover:text-secondary transition-colors"
+                  >
+                     <BsInstagram />
+                  </a>
+                  <a
+                     href={settings.telegram || '/'}
+                     className="hover:text-secondary transition-colors"
+                  >
+                     <BsTelegram />
+                  </a>
                </div>
             </div>
             <div className="mt-8 text-center text-sm">
-               © {Year} SoonDevelope. All rights reserved.
+               {settings.copyright}
             </div>
          </div>
       </footer>
@@ -73,20 +67,21 @@ function Footer() {
 }
 
 interface LayoutProps {
-  children: ReactNode;
-  isServicePage: boolean;
+   children: ReactNode;
+   services: Service[]
+   settings: Settings
 }
 
-export default function Layout({ children, isServicePage }: LayoutProps) {
+export default function Layout({ children, services, settings }: LayoutProps) {
+   const pathname = usePathname();
+   const isServicePage = pathname.startsWith('/service');
+
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
    const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-   const [services, setServices] = useState<Service[]>([]);
 
    useEffect(() => {
       const texts = document.querySelectorAll(".reveal-text");
       texts.forEach((text) => revealText(text as unknown as string));
-
-      fetchServices().then(setServices);
    }, []);
 
    const handleMenuClick = () => {
@@ -104,12 +99,12 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                      animate={{ opacity: 1 }}
                      className="text-secondary text-2xl font-bold"
                   >
-                     <Link to="/">SoonDevelope</Link>
+                     <Link href="/">{settings.site_name}</Link>
                   </motion.div>
                   <div className="hidden md:flex items-center space-x-8">
                      {isServicePage ? (
-                        <>                        
-                           <Link to="/" className="text-text-primary hover:text-secondary transition-colors">
+                        <>
+                           <Link href="/" className="text-text-primary hover:text-secondary transition-colors">
                               Home
                            </Link>
                            <div className="relative group">
@@ -131,10 +126,10 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                                        className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-primary/80 ring-1 ring-black ring-opacity-5"
                                     >
                                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                                          {services.map((service) => (
+                                          {services.map((service: Service) => (
                                              <Link
-                                                key={service.label}
-                                                to={`/services/${service.label}`}
+                                                key={service.slug}
+                                                href={`/service/${service.slug}`}
                                                 className="block px-4 py-2 text-sm text-text-primary hover:bg-secondary/10 hover:text-secondary"
                                                 role="menuitem"
                                                 onClick={() => setIsServicesDropdownOpen(false)}
@@ -174,10 +169,10 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                                        className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-primary/80 ring-1 ring-black ring-opacity-5"
                                     >
                                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                                          {services.map((service) => (
+                                          {services.map((service: Service) => (
                                              <Link
-                                                key={service.label}
-                                                to={`/services/${service.label}`}
+                                                key={service.slug}
+                                                href={`/service/${service.slug}`}
                                                 className="block px-4 py-2 text-sm text-text-primary hover:bg-secondary/10 hover:text-secondary"
                                                 role="menuitem"
                                                 onClick={() => setIsServicesDropdownOpen(false)}
@@ -225,7 +220,7 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                         {isServicePage ? (
                            <>
                               <Link
-                                 to="/"
+                                 href="/"
                                  onClick={handleMenuClick}
                                  className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
                               >
@@ -249,10 +244,10 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                                           exit={{ opacity: 0, y: -10 }}
                                           className="pl-4"
                                        >
-                                          {services.map((service) => (
+                                          {services.map((service: Service) => (
                                              <Link
-                                                key={service.label}
-                                                to={`/services/${service.label}`}
+                                                key={service.slug}
+                                                href={`/service/${service.slug}`}
                                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
                                                 onClick={handleMenuClick}
                                              >
@@ -319,10 +314,10 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
                                           exit={{ opacity: 0, y: -10 }}
                                           className="pl-4"
                                        >
-                                          {services.map((service) => (
+                                          {services.map((service: Service) => (
                                              <Link
-                                                key={service.label}
-                                                to={`/services/${service.label}`}
+                                                key={service.slug}
+                                                href={`/service/${service.slug}`}
                                                 className="block w-full text-text-primary py-2 hover:text-secondary transition-colors"
                                                 onClick={handleMenuClick}
                                              >
@@ -343,7 +338,7 @@ export default function Layout({ children, isServicePage }: LayoutProps) {
          <AnimatePresence mode="wait">
             <main>{children}</main>
          </AnimatePresence>
-         <Footer />
+         <Footer settings={settings} />
       </div>
    );
 }

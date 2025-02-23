@@ -7,7 +7,6 @@ class SiteSetting(models.Model):
     domain = models.CharField(max_length=300, verbose_name='Domain')
     site_name = models.CharField(max_length=100, verbose_name='Site name')
     site_logo = models.ImageField(upload_to='site_logo', verbose_name='Site logo')
-    site_icon = models.ImageField(upload_to='site_icon',null=True, blank=True, verbose_name='Site icon')
     site_description = models.TextField(verbose_name='Description')
     site_main_title = models.TextField(verbose_name='Site Main Title')
     rules = models.TextField(verbose_name='Rules')
@@ -50,6 +49,16 @@ class SiteSetting(models.Model):
         validators=[RegexValidator(
             regex=r'^https://www\.instagram\.com/.*$',
             message='Please enter a valid Instagram URL starting with https://www.instagram.com/'
+        )]
+    )
+    github = models.URLField(
+        max_length=400,
+        verbose_name='Github',
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex=r'^https://www\.github\.com/.*$',
+            message='Please enter a valid Instagram URL starting with https://www.github.com/'
         )]
     )
     email = models.EmailField(max_length=200, verbose_name='Email', null=True, blank=True)

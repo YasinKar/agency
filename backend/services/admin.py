@@ -3,7 +3,8 @@ from django.utils.html import format_html
 from .models import (
     ServiceFeature,
     ServiceImage,
-    Service
+    Service,
+    Project
 )
 
 class ServiceFeatureBlockInline(admin.TabularInline):
@@ -16,6 +17,17 @@ class ServiceImageBlockInline(admin.TabularInline):
     
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at', 'is_active')
+    list_display_links = ('title', )
+    list_filter = ('title', 'created_at', 'is_active')
+    search_fields = ('title', 'created_at', 'is_active')
+    list_editable = ('is_active', )
+    exclude = ('slug', )
+    
+    inlines = [ServiceFeatureBlockInline, ServiceImageBlockInline]
+    
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
     list_display = ('thumbnail_tag', 'title', 'created_at', 'is_active')
     list_display_links = ('thumbnail_tag', 'title')
     list_filter = ('title', 'created_at', 'is_active')
@@ -28,4 +40,5 @@ class ServiceAdmin(admin.ModelAdmin):
     
     thumbnail_tag.short_description = 'Image'
     
-    inlines = [ServiceFeatureBlockInline, ServiceImageBlockInline]
+admin.site.register(ServiceImage)
+admin.site.register(ServiceFeature)

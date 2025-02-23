@@ -1,17 +1,30 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.pagination import PageNumberPagination
-from .models import Service
-from .serializers import ServiceSerializer
+from .models import Service, Project
+from .serializers import ServiceSerializer, ProjectSerializer
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 
-class ServiceListPagination(PageNumberPagination):
-    page_size = 10
-    
 class ServiceListView(ListAPIView):
-    queryset = Service.objects.filter(is_active=True)
+    queryset = Service.objects.filter(is_active=True).prefetch_related('service_features', 'service_images')
     serializer_class = ServiceSerializer
-    pagination_class = ServiceListPagination
+    
+    @method_decorator(ratelimit(key='ip', rate='15/m', method='GET', block=True))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class ServiceDetailView(RetrieveAPIView):
-    queryset = Service.objects.filter(is_active=True)
+    queryset = Service.objects.filter(is_active=True).prefetch_related('service_features', 'service_images')
     serializer_class = ServiceSerializer
     lookup_field = 'slug'
+    
+    @method_decorator(ratelimit(key='ip', rate='15/m', method='GET', block=True))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+class ProjectListView(ListAPIView):
+    queryset = Project.objects.filter(is_active=True)
+    serializer_class = ProjectSerializer
+    
+    @method_decorator(ratelimit(key='ip', rate='15/m', method='GET', block=True))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

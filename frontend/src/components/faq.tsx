@@ -1,26 +1,14 @@
-import { useState } from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FAQ as FAQType } from '@/types/content.types'
 
-const faqs = [
-  {
-    question: 'What services do you offer?',
-    answer: 'We offer a comprehensive range of digital services including web development, UI/UX design, mobile app development, and digital marketing solutions.',
-  },
-  {
-    question: 'How long does a typical project take?',
-    answer: 'Project timelines vary depending on scope and complexity. A typical web development project can take 8-12 weeks from concept to launch.',
-  },
-  {
-    question: 'What is your design process?',
-    answer: 'Our design process includes discovery, wireframing, design concepts, revisions, and final implementation, with client collaboration at every step.',
-  },
-  {
-    question: 'Do you offer maintenance services?',
-    answer: 'Yes, we offer ongoing maintenance and support services to ensure your digital products remain up-to-date and perform optimally.',
-  },
-]
+type FAQProps = {
+  faqs: FAQType[]
+}
 
-export default function FAQ() {
+const FAQ: React.FC<FAQProps> = ({ faqs }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   return (
@@ -67,4 +55,6 @@ export default function FAQ() {
     </section>
   )
 }
+
+export default FAQ
 

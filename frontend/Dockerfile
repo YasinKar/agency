@@ -1,9 +1,8 @@
-FROM node:20-bullseye
+FROM node:21-alpine
 
 WORKDIR /app
 
-COPY package*.json .
+COPY ./package*.json ./
+RUN npm install
 
-RUN npm install --legacy-peer-deps
-
-COPY . .
+COPY . /app

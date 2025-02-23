@@ -1,27 +1,14 @@
+'use client'
+
 import { motion } from 'framer-motion'
+import React from 'react'
+import { Project } from '@/types/project.types'
 
-const projects = [
-  {
-    title: 'E-commerce Platform',
-    description: 'A fully responsive online store with seamless checkout experience.',
-    image: 'https://random-image-pepebigotes.vercel.app/api/random-image',
-    category: 'Web Development',
-  },
-  {
-    title: 'Fitness Tracking App',
-    description: 'Mobile application for tracking workouts and nutrition.',
-    image: 'https://random-image-pepebigotes.vercel.app/api/random-image',
-    category: 'Mobile Development',
-  },
-  {
-    title: 'Corporate Rebrand',
-    description: 'Complete visual identity overhaul for a Fortune 500 company.',
-    image: 'https://random-image-pepebigotes.vercel.app/api/random-image',
-    category: 'UI/UX Design',
-  },
-]
+type ProjectsProps = {
+  projects: Project[]
+}
 
-export default function Projects() {
+const Projects: React.FC<ProjectsProps> = ({ projects }) => {
   return (
     <section id="projects" className="py-20 bg-primary/30">
       <div className="container mx-auto px-4">
@@ -35,11 +22,11 @@ export default function Projects() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-primary/50 backdrop-blur-lg rounded-lg overflow-hidden"
             >
-              <img src={project.image} alt={project.title} className="w-full h-48 object-cover" />
+              <img src={project.thumbnail} alt={project.title} className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-secondary mb-2">{project.title}</h3>
                 <p className="text-text-primary mb-4">{project.description}</p>
-                <span className="text-special text-sm">{project.category}</span>
+                <span className="text-special text-sm">{project.service}</span>
               </div>
             </motion.div>
           ))}
@@ -49,3 +36,4 @@ export default function Projects() {
   )
 }
 
+export default Projects

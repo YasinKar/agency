@@ -1,7 +1,10 @@
+'use client'
+
 import { motion } from "framer-motion";
 import { FaCloud, FaQuestionCircle, FaEnvelope } from "react-icons/fa";
+import React from 'react'
 
-export default function Hero() {
+const Hero = () => {
   return (
     <section
       id="home"
@@ -79,14 +82,14 @@ export default function Hero() {
             href="#contact"
             className="flex items-center bg-special text-secondary py-2 px-6 rounded-lg hover:bg-special/80 transition hover:scale-105 space-x-2"
           >
-            <FaEnvelope className="text-secondary text-lg" /> 
+            <FaEnvelope className="text-secondary text-lg" />
             <span>Contact</span>
           </a>
           <a
             href="#faq"
             className="flex items-center bg-secondary/80 text-primary py-2 px-6 rounded-lg hover:bg-secondary/70 transition hover:scale-105 space-x-2"
           >
-            <FaQuestionCircle className="text-primary text-lg" /> 
+            <FaQuestionCircle className="text-primary text-lg" />
             <span>FAQ</span>
           </a>
         </div>
@@ -95,3 +98,5 @@ export default function Hero() {
     </section>
   );
 }
+
+export default Hero

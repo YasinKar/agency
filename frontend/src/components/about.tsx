@@ -1,14 +1,13 @@
+'use client'
+
 import { motion } from 'framer-motion';
+import React from 'react'
 
-type AboutType = {
-  about: string;
-};
+type AboutProps = {
+  about: string
+}
 
-const aboutData: AboutType = {
-  about: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis nostrum perspiciatis recusandae in corporis animi. Distinctio enim doloremque accusamus ducimus adipisci veritatis modi neque officiis, vel sit. Officiis, ab ipsam?' ,
-};
-
-export default function About() {
+const About: React.FC<AboutProps> = ({ about }) => {
   return (
     <section id="about" className="py-20 bg-primary/30">
       <div className="container mx-auto px-10">
@@ -21,9 +20,11 @@ export default function About() {
           transition={{ duration: 0.5 }}
           className="bg-primary/50 backdrop-blur-lg rounded-lg p-6 text-center"
         >
-          <p className="text-lg text-secondary/90 ">{aboutData.about}</p>
+          <p className="text-lg text-secondary/90 ">{about}</p>
         </motion.div>
       </div>
     </section>
   );
 }
+
+export default About
