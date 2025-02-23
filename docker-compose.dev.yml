@@ -10,6 +10,8 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    networks:
+      - main_network
 
   mongo:
     image: mongo
@@ -22,6 +24,8 @@ services:
       - mongo_data:/data/db
     ports:
       - 27017:27017
+    networks:
+      - main_network
 
   mongo-express:
     image: mongo-express
@@ -33,6 +37,8 @@ services:
       - ME_CONFIG_MONGODB_SERVER=mongo
     depends_on:
       - mongo
+    networks:
+      - main_network
 
   backend:
     image: backend
@@ -49,6 +55,8 @@ services:
     depends_on:
       - redis
       - mongo
+    networks:
+      - main_network
 
   frontend:
     build:
@@ -62,6 +70,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - main_network
 
   nginx:
     image: nginx:latest
@@ -76,7 +86,13 @@ services:
       - backend
       - frontend
     restart: always
+    networks:
+      - main_network
 
 volumes:
   mongo_data:
   redis_data:
+
+networks:
+  main_network:
+    driver: bridge

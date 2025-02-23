@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import { Project } from '@/types/project.types'
+import { BsEye } from 'react-icons/bs'
 
 type ProjectsProps = {
   projects: Project[]
@@ -26,7 +27,13 @@ const Projects: React.FC<ProjectsProps> = ({ projects }) => {
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-secondary mb-2">{project.title}</h3>
                 <p className="text-text-primary mb-4">{project.description}</p>
-                <span className="text-special text-sm">{project.service}</span>
+                <div className='flex justify-between items-center'>
+                  <span className="text-special text-sm">{project.service}</span>
+                  <a className="text-special flex items-center gap-2" href={project.demo}>
+                    Demo
+                    <BsEye />
+                  </a>
+                </div>
               </div>
             </motion.div>
           ))}

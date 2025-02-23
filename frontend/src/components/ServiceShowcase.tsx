@@ -10,6 +10,8 @@ type ServiceSliderProps = {
 
 const ServiceShowcase: React.FC<ServiceSliderProps> = ({ service }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    console.log(service.service_images);
+    
 
     const nextImage = () => {
         setCurrentImageIndex((prevIndex) =>
